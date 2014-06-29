@@ -1,6 +1,6 @@
 # wave-polymer-components
 
-A Polymer component for the Wave.
+A Polymer component for the Wave ecosystem.
 
 Includes:
 
