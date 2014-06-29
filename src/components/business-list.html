@@ -1,0 +1,201 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/core-icons/core-icons.html">
+<link rel="import" href="business-list-service.html">
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.compat.min.js"></script>
+
+<polymer-element name="business-list" attributes="active">
+  <template>
+    <style>
+      :host {
+        display: block;
+        position: relative;
+      }
+      #BusinessDropdown {
+        position: absolute;
+        top: 45px;
+        left: 35px;
+      }
+      #BusinessDropdown::before {
+        position: absolute;
+        top: -6px;
+        left: 25px;
+        display: inline-block;
+        border-right: 7px solid transparent;
+        border-left: 7px solid transparent;
+        border-bottom: 7px solid #44a0cd;
+        content: '';
+      }
+      a#CurrentBusiness {
+        text-decoration: none;
+      }
+      #CurrentBusiness {
+        display: inline-block;
+        color: #fff;
+        background-color: #142026;
+        background-image: -webkit-linear-gradient(top, #18262d, #0f181c);
+        background-repeat: repeat-x;
+        box-shadow: inset 0 2px 0 #000;
+        color: #fff;
+        height: 50px;
+        line-height: 50px;
+        font-size: 18px;
+        padding: 0 10px;
+      }
+      #CurrentBusiness img {
+        float: left;
+        margin: 8px 10px 0 0;
+      }
+      #ArrowIcon {
+        fill: #fff;
+      }
+      ul {
+        background: #fff;
+        margin: 0;
+        padding: 3px;
+        list-style: none;
+        border-radius: 0 0 4px 4px;
+      }
+      li {
+        height: 40px;
+        word-wrap: break-word;
+        word-break: break-all;
+        overflow: hidden;
+        width: 270px;
+      }
+      li core-icon {
+        float: right;
+        margin-top: 7px;
+        margin-right: 3px;
+      }
+      li a {
+        text-decoration: none;
+        height: 40px;
+        display: block;
+        border-radius: 3px;
+        color: #1296d6;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      li a:hover {
+        text-decoration: none;
+        background-color: rgba(133,200,233,0.6);
+      }
+      li a core-icon[icon="chevron-right"] {
+        fill: rgba(156, 190, 208, 1.0);
+      }
+      li a core-icon[icon="chevron-right"] {
+        display: none;
+      }
+      li a:hover core-icon[icon="chevron-right"] {
+        display: inline-block;
+      }
+      li span {
+        color: #1296d6;
+        display: inline-block;
+        padding: 10px;
+      }
+      li core-icon[icon="check"] {
+        fill: lightgray;
+      }
+      .hidden {
+        display: none !important;
+      }
+      #DropdownTitle {
+        color: #fff;
+        height: 11px;
+        padding: 10px;
+        background-color: #44a0cd;
+        background-image: -webkit-linear-gradient(top,#4ca4cf,#389aca);
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.4);
+        border-radius: 4px 4px 0 0;
+        text-transform: uppercase;
+        border-bottom: 1px solid rgba(0,0,0,0.15);
+        font-size: 11px;
+      }
+      #CloseIcon {
+        float: right;
+        margin-top: -2px;
+        cursor: pointer;
+        fill: #000;
+        opacity: 0.3;
+      }
+      #CloseIcon:hover {
+        opacity: 0.8;
+      }
+      .current {
+        color: #999;
+      }
+    </style>
+
+    <business-list-service businesses="{{businesses}}"></business-list-service>
+
+    <!--<div layout vertical>-->
+      <a id="CurrentBusiness"
+        href="javascript:void(0)"
+        on-click="{{onSwitcherClick}}">
+        <img src="https://my.waveapps.com/sitestatic/float/images/new/wave.png">
+        {{ businesses | getActiveCompanyName }}
+        <core-icon id="ArrowIcon" icon="{{arrow}}"></core-icon>
+      </a>
+    <!--</div>-->
+
+    <div id="BusinessDropdown" layout vertical class="hidden">
+      <div id="DropdownTitle">
+        Switch Active Business <core-icon id="CloseIcon" icon="close" size="18" on-click="{{closeSwitcher}}"></core-icon>
+      </div>
+      <ul id="Switcher">
+        <template repeat="{{business in businesses}}">
+          <li>
+            <template if="{{business.id === active}}">
+              <span class="current">{{business.company_name}}</span>
+              <core-icon icon="check"></core-icon>
+            </template>
+            <template if="{{business.id !== active}}">
+              <a href="https://my.waveapps.com/switch/{{business.id}}">
+                <span>{{business.company_name}}</span>
+                <core-icon icon="chevron-right"></core-icon>
+              </a>
+            </template>
+          </li>
+        </template>
+      </ul>
+    </div>
+  </template>
+  <script>
+    Polymer('business-list', {
+      publish: {
+        arrow: {
+          value: 'arrow-drop-down',
+          reflect: true
+        }
+      },
+      closeSwitcher: function() {
+        var switcher = this.$.BusinessDropdown;
+        switcher.classList.add('hidden');
+        this.arrow = 'arrow-drop-down';
+      },
+      onSwitcherClick: function(event, detail, sender) {
+        var switcher = this.$.BusinessDropdown;
+        switcher.classList.toggle('hidden');
+        this.arrow = this.arrow === 'arrow-drop-up' ? 'arrow-drop-down' : 'arrow-drop-up';
+      },
+      getActiveCompanyName: function(value) {
+        if (_.isEmpty(value)) {
+          return '';
+        }
+        var _this = this;
+        var business = _.find(value, function(e) {
+          if (e.id === _this.active) {
+            return e;
+          }
+        });
+        if (!business) {
+          return '';
+        }
+        return business.company_name;
+      }
+    });
+  </script>
+</polymer-element>

@@ -1,0 +1,34 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/core-ajax/core-ajax.html">
+
+<polymer-element name="business-list-service" attributes="businesses">
+  <template>
+    <style>
+    :host {
+      display: none;
+    }
+    </style>
+
+
+      <!--url="../../businesses.json"-->
+
+    <core-ajax id="ajax"
+      auto
+      url="https://api.wave-local.com/businesses/"
+      on-core-response="{{businessesLoaded}}"
+      headers='{"Authorization": "Bearer ehOSxpkjkE6L2eLWwAyhG9vGwS6Gx8"}'
+      handleAs="json">
+    </core-ajax>
+  </template>
+  <script>
+    Polymer('business-list-service', {
+      created: function() {
+        this.businesses = [];
+      },
+      businessesLoaded: function() {
+        // Make local copy of businesses
+        this.businesses = this.$.ajax.response.slice(0);
+      }
+    });
+  </script>
+</polymer-element>
