@@ -4,7 +4,7 @@
 
 <script src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.compat.min.js"></script>
 
-<polymer-element name="business-list" attributes="active">
+<polymer-element name="business-list" attributes="active position">
   <template>
     <style>
       :host {
@@ -14,17 +14,27 @@
       #BusinessDropdown {
         position: absolute;
         top: 45px;
+      }
+      #BusinessDropdown.position-left {
         left: 35px;
+      }
+      #BusinessDropdown.position-right {
+        right: 35px;
       }
       #BusinessDropdown::before {
         position: absolute;
         top: -6px;
-        left: 25px;
         display: inline-block;
         border-right: 7px solid transparent;
         border-left: 7px solid transparent;
         border-bottom: 7px solid #44a0cd;
         content: '';
+      }
+      #BusinessDropdown.position-left::before {
+        left: 25px;
+      }
+      #BusinessDropdown.position-right::before {
+        right: 25px;
       }
       a#CurrentBusiness {
         text-decoration: none;
@@ -141,7 +151,7 @@
       </a>
     <!--</div>-->
 
-    <div id="BusinessDropdown" layout vertical class="hidden">
+    <div id="BusinessDropdown" layout vertical class="hidden position-{{position || 'left'}}">
       <div id="DropdownTitle">
         Switch Active Business <core-icon id="CloseIcon" icon="close" size="18" on-click="{{closeSwitcher}}"></core-icon>
       </div>
