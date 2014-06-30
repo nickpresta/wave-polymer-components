@@ -5,7 +5,7 @@ A Polymer component for the Wave ecosystem.
 Includes:
 
 * Business switcher dropdown
-* Notifications shade
+* Notifications list
 
 
 ## Business Switcher
