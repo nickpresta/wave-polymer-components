@@ -94,7 +94,7 @@
         return dt.format('llll');
       },
       dismissNotification: function(event, detail, sender) {
-        this.$.NotificationsService.dismiss(this.notification);
+        //this.$.NotificationsService.dismiss(this.notification);
         var card = sender.parentNode.parentNode;
         var animation = new Animation(card, [
             {opacity: '1.0'}, 
