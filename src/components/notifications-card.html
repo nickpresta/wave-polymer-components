@@ -1,0 +1,115 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/core-icons/core-icons.html">
+<link rel="import" href="../../bower_components/core-icons/iconsets/social-icons.html">
+<link rel="import" href="../../bower_components/core-icons/iconsets/device-icons.html">
+<link rel="import" href="../../bower_components/polymer-ui-card/polymer-ui-card.html">
+<link rel="import" href="../../bower_components/polymer-animation/web-animations.html">
+<link rel="import" href="notifications-list-service.html">
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.compat.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.7.0/moment.min.js"></script>
+
+<polymer-element name="notifications-card" attributes="notification">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+      polymer-ui-card {
+        display: table;
+        border: 1px solid #ddd;
+        margin: 0 3px 10px;
+        cursor: pointer;
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        -khtml-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+        padding: 10px;
+        position: relative;
+        width: 270px;
+        min-height: 60px;
+      }
+      .notification-icon, .notification-dismiss-area {
+        vertical-align: middle;
+        display: table-cell;
+      }
+      .notification-content {
+        margin-left: 5px;
+        font-size: 13px;
+        word-wrap: break-word;
+        word-break: break-word;
+        overflow: hidden;
+      }
+      .access-time {
+        color: #999;
+        font-size: 11px;
+        position: absolute;
+        bottom: 10px;
+      }
+      .access-time core-icon {
+        fill: #999;
+      }
+    </style>
+
+    <polymer-ui-card swipeable nocurve>
+      <div class="notification-icon">
+        <core-icon icon="{{ notification.type | getIcon }}" size="40"></core-icon>
+      </div>
+      <div class="notification-content">
+        <div>{{notification.payload.customer_name}} {{notification.type | getAction}} {{notification.payload.invoice_number_label}} #{{notification.payload.invoice_number}}</div>
+        <div class="access-time"><core-icon icon="device:access-time" size="12"></core-icon> {{notification.date_first_seen | formatDatetime}}</div>
+      </div>
+        <div class="notification-dismiss-area">
+          <core-icon icon="done" on-click="{{dismissNotification}}"></core-icon>
+        </div>
+        </div>
+      </template>
+    </polymer-ui-card>
+  </template>
+  <script>
+    Polymer('notifications-card', {
+      getIcon: function(value) {
+        var icons = {
+          'wave.invoice.readonly': 'visibility',
+          'wave.invoice.payment.created': 'credit-card'
+        };
+
+        return icons[value] || '';
+      },
+      getAction: function(value) {
+        var actions = {
+          'wave.invoice.readonly': 'viewed',
+          'wave.invoice.payment.created': 'made a payment for'
+        };
+
+        return actions[value] || '';
+      },
+      formatDatetime: function(value) {
+        if (_.isEmpty(value)) {
+          return '';
+        }
+        var dt = window.moment(value);
+        return dt.format('llll');
+      },
+      dismissNotification: function(event, detail, sender) {
+        this.$.NotificationsService.dismiss(this.notification);
+        var card = sender.parentNode.parentNode;
+        var animation = new Animation(card, [
+            {opacity: '1.0'}, 
+            {opacity: '0.0'}
+          ], {
+            direction: 'forwards',
+            duration: 500,
+            fill: 'forwards'
+          }
+        );
+        var player = document.timeline.play(animation);
+        player.onfinish = function() {
+          card.parentNode.removeChild(card);
+        };
+      }
+    });
+  </script>
+</polymer-element>

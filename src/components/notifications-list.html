@@ -1,0 +1,161 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/core-icons/core-icons.html">
+<link rel="import" href="../../bower_components/core-icons/iconsets/social-icons.html">
+<link rel="import" href="notifications-card.html">
+<link rel="import" href="notifications-list-service.html">
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.compat.min.js"></script>
+
+<polymer-element name="notifications-list" attributes="active position">
+  <template>
+    <style>
+      :host {
+        display: block;
+        position: relative;
+      }
+      #NotificationsDropdown {
+        position: absolute;
+        top: 50px;
+        z-index: 1;
+      }
+      #NotificationsDropdown.position-left {
+        left: 0;
+      }
+      #NotificationsDropdown.position-right {
+        right: 0;
+      }
+      #NotificationsDropdown::before {
+        position: absolute;
+        top: -6px;
+        display: inline-block;
+        border-right: 7px solid transparent;
+        border-left: 7px solid transparent;
+        border-bottom: 7px solid #44a0cd;
+        content: '';
+      }
+      #NotificationsDropdown.position-left::before {
+        left: 18px;
+      }
+      #NotificationsDropdown.position-right::before {
+        right: 18px;
+      }
+      a#NotificationTarget {
+        text-decoration: none;
+      }
+      #NotificationTarget {
+        display: inline-block;
+        color: #fff;
+        background-color: #142026;
+        background-image: -webkit-linear-gradient(top, #18262d, #0f181c);
+        background-repeat: repeat-x;
+        box-shadow: inset 0 2px 0 #000;
+        color: #fff;
+        height: 50px;
+        line-height: 50px;
+        font-size: 18px;
+        width: 50px;
+        text-align: center;
+      }
+      #NotificationsIcon {
+        fill: #fff;
+      }
+      ul {
+        background: #fff;
+        margin: 0;
+        padding: 3px;
+        list-style: none;
+        border-radius: 0 0 4px 4px;
+        width: 300px;
+      }
+      li {
+        width: 300px;
+      }
+      li a {
+        text-decoration: none;
+        height: 40px;
+        display: block;
+        border-radius: 3px;
+        color: #1296d6;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .hidden {
+        display: none !important;
+      }
+      #DropdownTitle {
+        color: #fff;
+        height: 11px;
+        padding: 10px;
+        background-color: #44a0cd;
+        background-image: -webkit-linear-gradient(top,#4ca4cf,#389aca);
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.4);
+        border-radius: 4px 4px 0 0;
+        text-transform: uppercase;
+        border-bottom: 1px solid rgba(0,0,0,0.15);
+        font-size: 11px;
+      }
+      #CloseIcon {
+        float: right;
+        margin-top: -2px;
+        cursor: pointer;
+        fill: #000;
+        opacity: 0.3;
+      }
+      #CloseIcon:hover {
+        opacity: 0.8;
+      }
+    </style>
+
+    <notifications-list-service id="NotificationsService" notifications="{{notifications}}"></notifications-list-service>
+
+    <a id="NotificationTarget"
+      href="javascript:void(0)"
+      on-click="{{onSwitcherClick}}">
+      <template if="{{notifications.length === 0}}">
+        <core-icon id="NotificationsIcon" icon="social:notifications-none"></core-icon>
+      </template>
+      <template if="{{notifications.length > 0}}">
+        <core-icon id="NotificationsIcon" icon="social:notifications"></core-icon>
+      </template>
+    </a>
+
+    <div id="NotificationsDropdown" layout vertical class="hidden position-{{position || 'left'}}">
+      <div id="DropdownTitle">
+        Notifications <core-icon id="CloseIcon" icon="close" size="18" on-click="{{closeSwitcher}}"></core-icon>
+      </div>
+      <ul id="Switcher">
+        <template if="{{notifications.length === 0}}">
+          <li><span>No notifications right now...</span></li>
+        </template>
+
+        <template if="{{notifications.length > 0}}" repeat="{{n in notifications}}">
+          <li>
+            <notifications-card notification="{{n}}"></notifications>
+          </li>
+        </template>
+      </ul>
+    </div>
+  </template>
+  <script>
+    Polymer('notifications-list', {
+      closeSwitcher: function() {
+        var switcher = this.$.NotificationsDropdown;
+        switcher.classList.add('hidden');
+        this.arrow = 'arrow-drop-down';
+      },
+      onSwitcherClick: function(event, detail, sender) {
+        var switcher = this.$.NotificationsDropdown;
+        switcher.classList.toggle('hidden');
+        this.arrow = this.arrow === 'arrow-drop-up' ? 'arrow-drop-down' : 'arrow-drop-up';
+      },
+      domReady: function() {
+        var _this = this;
+        this.$.Switcher.addEventListener('polymer-card-swipe-away', function(e) {
+          _this.$.NotificationsService.dismiss();
+          e.target.parentNode.removeChild(e.target);
+        });
+      }
+    });
+  </script>
+</polymer-element>

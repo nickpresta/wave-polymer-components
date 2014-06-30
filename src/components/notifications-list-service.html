@@ -1,0 +1,35 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/core-ajax/core-ajax.html">
+
+<polymer-element name="notifications-list-service" attributes="notifications">
+  <template>
+    <style>
+    :host {
+      display: none;
+    }
+    </style>
+
+    <core-ajax id="ajax"
+      auto
+      url="https://api.wave-local.com/user/notifications/"
+      on-core-response="{{notificationsLoaded}}"
+      headers='{"Authorization": "Bearer ehOSxpkjkE6L2eLWwAyhG9vGwS6Gx8"}'
+      handleAs="json">
+    </core-ajax>
+  </template>
+
+  <script>
+    Polymer('notifications-list-service', {
+      created: function() {
+        this.notifications = [];
+      },
+      notificationsLoaded: function() {
+        // Make local copy of notifications
+        this.notifications = this.$.ajax.response.slice(0).reverse();
+      },
+      dismiss: function(notification) {
+        console.log('dismissed');
+      }
+    });
+  </script>
+</polymer-element>

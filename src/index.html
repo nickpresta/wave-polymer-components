@@ -8,6 +8,7 @@
     <!--<link rel="import" href="../bower_components/font-roboto/roboto.html">-->
     <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet" type="text/css">
     <link rel="import" href="components/business-list.html">
+    <link rel="import" href="components/notifications-list.html">
     <style>
       html,body {
         height: 100%;
@@ -23,7 +24,7 @@
         background-image: -webkit-linear-gradient(top,#243944,#1d2e37);
         background-repeat: repeat-x;
 
-        width: 80%;
+        width: 90%;
         margin: 50px auto;
       }
       .left {
@@ -45,5 +46,26 @@
         <business-list active="5f5d03d1-2b0e-4c42-8a21-3501086d1f47" position="right"></business-list>
       </div>
     </div>
+
+    <div class="container" layout>
+      <div class="left">
+        <notifications-list business-filter="5f5d03d1-2b0e-4c42-8a21-3501086d1f47"></notifications-list>
+      </div>
+
+      <div class="right">
+        <notifications-list position="right"></notifications-list>
+      </div>
+    </div>
+
+    <div class="container" layout>
+      <div class="left">
+        <business-list active="5f5d03d1-2b0e-4c42-8a21-3501086d1f47"></business-list>
+      </div>
+
+      <div class="right">
+        <notifications-list position="right"></notifications-list>
+      </div>
+    </div>
+
   </body>
 </html>
